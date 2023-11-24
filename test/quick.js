@@ -1,4 +1,6 @@
 const Seneca = require('seneca')
+const BrowserStore = require('..')
+console.log(BrowserStore)
 
 run()
 
@@ -6,24 +8,55 @@ async function run() {
   const seneca = Seneca()
     .test()
     .use('promisify')
-    .use('entity', { mem_store: false })
-    .use('..')
+        .use('entity')
+        .use(function entityServer() {
+          let seneca = this
 
+          seneca
+            .fix('req:web,on:entity')
+            .message('cmd:save', async function save(msg) {
+              return {ok:true, ent: (await this.entity(msg.canon).save$(msg.ent)).data$() }
+            })
+            .message('cmd:load', async function save(msg) {
+              return {ok:true, ent: (await this.entity(msg.canon).load$(msg.q))?.data$() }
+            })
+            .message('cmd:list', async function save(msg) {
+              return {ok:true, list: (await this.entity(msg.canon).list$(msg.q))
+                      .map(n=>n.data$()) }
+            })
+            .message('cmd:remove', async function remove(msg) {
+              return {ok:true, ent: (await this.entity(msg.canon).remove$(msg.q))?.data$() }
+            })
+        })
+        .use(BrowserStore,{
+          map: {
+            'browser/-/-': '*'
+          },
+          apimsg: {
+            canon: (msg) => ((msg.ent||msg.qent).entity$).replace('browser/','-/'),
+          }
+          
+        })
+
+  
   await seneca.ready()
 
-  console.log(seneca.list())
-  console.log(seneca.find('sys:entity,cmd:load'))
+  await seneca.entity('foo').save$({id:1,x:1})
+  await seneca.entity('foo').save$({id:2,x:2})
 
-  let role_load = seneca.find('role:entity,cmd:load')
-  console.log(role_load)
-  console.log(role_load.func.toString())
+  let out = await seneca.entity('browser/-/foo').list$()
+  console.log('list', out)
 
-  const foo1 = await seneca.entity('foo').data$({ x: 1 }).save$()
-  console.log(foo1)
+  let foo3 = await seneca.entity('browser/-/foo').save$({id:3,x:3})
+  console.log('foo3', foo3)
 
-  const foo2 = await seneca.entity('foo').data$({ x: 2 }).save$()
-  console.log(foo2)
+  out = await seneca.entity('browser/-/foo').load$(3)
+  console.log('load', out)
 
-  const list = await seneca.entity('foo').list$()
-  console.log(list)
+  out = await seneca.entity('browser/-/foo').remove$(1)
+  console.log('remove', out)
+
+  out = await seneca.entity('browser/-/foo').list$()
+  console.log('list', out)
+  
 }
