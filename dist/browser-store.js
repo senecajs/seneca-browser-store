@@ -5,8 +5,7 @@ function BrowserStore(options) {
     let seneca = this;
     let init = seneca.export('entity/init');
     let ohr = options.handleResponse;
-    let handleResponse = ['save', 'load', 'list', 'remove']
-        .reduce((a, n) => (a[n] = (ohr[n] || ohr.any), a), {});
+    let handleResponse = ['save', 'load', 'list', 'remove'].reduce((a, n) => ((a[n] = ohr[n] || ohr.any), a), {});
     function makeApiMsg(msg, ctx, options) {
         let apimsg = {};
         let apimsgtm = options.apimsg;
@@ -66,7 +65,7 @@ function BrowserStore(options) {
         tag: meta.tag,
         exports: {
             makeApiMsg,
-        }
+        },
     };
 }
 BrowserStore.defaults = {
@@ -97,7 +96,7 @@ BrowserStore.defaults = {
                 reply(out.ent);
             }
             else {
-                reply(out && out.err ||
+                reply((out && out.err) ||
                     new Error('BrowserStore: ' + ctx.cmd + ' ' + ctx.canon + ': unknown error'));
             }
         },
@@ -109,14 +108,18 @@ BrowserStore.defaults = {
                 reply(list);
             }
             else {
-                reply(out && out.err ||
-                    new Error('BrowserStore: ' + ctx.cmd + ' ' + ctx.canon + ': unknown list error'));
+                reply((out && out.err) ||
+                    new Error('BrowserStore: ' +
+                        ctx.cmd +
+                        ' ' +
+                        ctx.canon +
+                        ': unknown list error'));
             }
-        }
-    }
+        },
+    },
 };
 exports.default = BrowserStore;
-if ('undefined' !== typeof (module)) {
+if ('undefined' !== typeof module) {
     module.exports = BrowserStore;
 }
 //# sourceMappingURL=browser-store.js.map

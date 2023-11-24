@@ -1,6 +1,6 @@
 {
   "name": "@seneca/browser-store",
-  "version": "8.4.0",
+  "version": "0.0.1",
   "description": "Seneca in-memory data storage plugin.",
   "main": "dist/browser-store.js",
   "type": "commonjs",

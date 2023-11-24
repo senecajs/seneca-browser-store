@@ -1,15 +1,15 @@
 /* Copyright (c) 2023 Richard Rodger and other contributors, MIT License */
 
-
 function BrowserStore(this: any, options: any) {
   let seneca: any = this
 
   let init = seneca.export('entity/init')
 
   let ohr = options.handleResponse
-  let handleResponse = ['save', 'load', 'list', 'remove']
-    .reduce((a: any, n) => (a[n] = (ohr[n] || ohr.any), a), {})
-
+  let handleResponse = ['save', 'load', 'list', 'remove'].reduce(
+    (a: any, n) => ((a[n] = ohr[n] || ohr.any), a),
+    {},
+  )
 
   function makeApiMsg(msg: any, ctx: any, options: any) {
     let apimsg: any = {}
@@ -19,15 +19,13 @@ function BrowserStore(this: any, options: any) {
       let pv = apimsgtm[pn]
       if ('function' === typeof pv) {
         apimsg[pn] = pv(msg, ctx, options)
-      }
-      else {
+      } else {
         apimsg[pn] = JSON.parse(JSON.stringify(pv))
       }
     }
 
     return apimsg
   }
-
 
   let store = {
     name: 'BrowserStore',
@@ -49,7 +47,6 @@ function BrowserStore(this: any, options: any) {
         return handleResponse.load(this, ctx, reply, err, out)
       })
     },
-
 
     list: function (this: any, msg: any, reply: any) {
       let ctx = options.prepareCtx(msg)
@@ -88,11 +85,9 @@ function BrowserStore(this: any, options: any) {
     tag: meta.tag,
     exports: {
       makeApiMsg,
-    }
+    },
   }
-
 }
-
 
 BrowserStore.defaults = {
   apimsg: {
@@ -125,10 +120,13 @@ BrowserStore.defaults = {
 
       if (out && out.ok && (out.ent || 'remove' === ctx.cmd)) {
         reply(out.ent)
-      }
-      else {
-        reply(out && out.err ||
-          new Error('BrowserStore: ' + ctx.cmd + ' ' + ctx.canon + ': unknown error'))
+      } else {
+        reply(
+          (out && out.err) ||
+            new Error(
+              'BrowserStore: ' + ctx.cmd + ' ' + ctx.canon + ': unknown error',
+            ),
+        )
       }
     },
 
@@ -136,20 +134,28 @@ BrowserStore.defaults = {
       if (err) reply(err)
 
       if (out && out.ok && out.list) {
-        let list =
-          out.list.map((item: any) => seneca.entity(ctx.canon).data$(item))
+        let list = out.list.map((item: any) =>
+          seneca.entity(ctx.canon).data$(item),
+        )
         reply(list)
+      } else {
+        reply(
+          (out && out.err) ||
+            new Error(
+              'BrowserStore: ' +
+                ctx.cmd +
+                ' ' +
+                ctx.canon +
+                ': unknown list error',
+            ),
+        )
       }
-      else {
-        reply(out && out.err ||
-          new Error('BrowserStore: ' + ctx.cmd + ' ' + ctx.canon + ': unknown list error'))
-      }
-    }
-  }
+    },
+  },
 }
 
 export default BrowserStore
 
-if ('undefined' !== typeof (module)) {
+if ('undefined' !== typeof module) {
   module.exports = BrowserStore
 }
