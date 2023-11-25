@@ -13,7 +13,7 @@ async function run() {
       let seneca = this
 
       seneca
-        .fix('req:web,on:entity')
+        .fix('aim:req,on:entity')
         .message('cmd:save', async function save(msg) {
           return {
             ok: true,

@@ -91,7 +91,7 @@ function BrowserStore(this: any, options: any) {
 
 BrowserStore.defaults = {
   apimsg: {
-    req: 'web',
+    aim: 'req',
     on: 'entity',
     debounce$: true,
     q: (msg: any, ctx: any) => msg.q,

@@ -32,7 +32,7 @@ describe('browser-store tests', function () {
         let seneca = this
 
         seneca
-          .fix('req:web,on:entity')
+          .fix('aim:req,on:entity')
           .message('cmd:save', async function save(msg) {
             return {
               ok: true,

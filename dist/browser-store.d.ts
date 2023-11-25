@@ -8,7 +8,7 @@ declare function BrowserStore(this: any, options: any): {
 declare namespace BrowserStore {
     var defaults: {
         apimsg: {
-            req: string;
+            aim: string;
             on: string;
             debounce$: boolean;
             q: (msg: any, ctx: any) => any;
