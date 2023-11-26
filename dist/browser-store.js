@@ -39,7 +39,7 @@ function BrowserStore(options) {
         list: function (msg, reply) {
             let ctx = options.prepareCtx(msg);
             let apimsg = makeApiMsg(msg, ctx, options);
-            // console.log(apimsg, ctx)
+            console.log('LIST', apimsg, ctx);
             // return reply()
             this.act(apimsg, function list_result(err, out) {
                 return handleResponse.list(this, ctx, reply, err, out);
