@@ -11,6 +11,19 @@ function BrowserStore(this: any, options: any) {
     {},
   )
 
+  const msglog: {
+    msg: any
+    meta: any
+    start: number
+    ctx?: any
+    apimsg?: any
+    res?: any
+    err?: any
+    apimeta?: any
+    apiend?: number
+    end?: number
+  }[] = []
+
   function makeApiMsg(msg: any, ctx: any, options: any) {
     let apimsg: any = {}
     let apimsgtm = options.apimsg
@@ -30,43 +43,76 @@ function BrowserStore(this: any, options: any) {
   let store = {
     name: 'BrowserStore',
 
-    save: function (this: any, msg: any, reply: any) {
+    save: function (this: any, msg: any, reply: any, _meta: any) {
+      let logn = options.debug && logstart(arguments)
       let ctx = options.prepareCtx(msg)
       let apimsg = makeApiMsg(msg, ctx, options)
 
-      this.act(apimsg, function save_result(this: any, err: Error, out: any) {
-        return handleResponse.save(this, ctx, reply, err, out)
-      })
+      logn && (logn.ctx = ctx) && (logn.apimsg = apimsg)
+      this.act(
+        apimsg,
+        function save_result(this: any, err: Error, res: any, apimeta: any) {
+          logn &&
+            (logn.apiend = Date.now()) &&
+            (logn.err = err) &&
+            (logn.res = res) &&
+            (logn.apimeta = apimeta)
+          return handleResponse.save(this, ctx, reply, err, res, apimeta, logn)
+        },
+      )
     },
 
-    load: function (this: any, msg: any, reply: any) {
+    load: function (this: any, msg: any, reply: any, _meta: any) {
+      let logn = options.debug && logstart(arguments)
       let ctx = options.prepareCtx(msg)
       let apimsg = makeApiMsg(msg, ctx, options)
 
-      this.act(apimsg, function load_result(this: any, err: Error, out: any) {
-        return handleResponse.load(this, ctx, reply, err, out)
-      })
+      logn && (logn.ctx = ctx) && (logn.apimsg = apimsg)
+      this.act(
+        apimsg,
+        function load_result(this: any, err: Error, res: any, apimeta: any) {
+          logn && logres(logn, arguments)
+          return handleResponse.load(this, ctx, reply, err, res, apimeta, logn)
+        },
+      )
     },
 
-    list: function (this: any, msg: any, reply: any) {
+    list: function (this: any, msg: any, reply: any, _meta: any) {
+      let logn = options.debug && logstart(arguments)
       let ctx = options.prepareCtx(msg)
       let apimsg = makeApiMsg(msg, ctx, options)
 
-      console.log('LIST', apimsg, ctx)
-      // return reply()
-
-      this.act(apimsg, function list_result(this: any, err: Error, out: any) {
-        return handleResponse.list(this, ctx, reply, err, out)
-      })
+      logn && (logn.ctx = ctx) && (logn.apimsg = apimsg)
+      this.act(
+        apimsg,
+        function list_result(this: any, err: Error, res: any, apimeta: any) {
+          logn && logres(logn, arguments)
+          return handleResponse.list(this, ctx, reply, err, res, apimeta, logn)
+        },
+      )
     },
 
-    remove: function (this: any, msg: any, reply: any) {
+    remove: function (this: any, msg: any, reply: any, _meta: any) {
+      let logn = options.debug && logstart(arguments)
       let ctx = options.prepareCtx(msg)
       let apimsg = makeApiMsg(msg, ctx, options)
 
-      this.act(apimsg, function remove_result(this: any, err: Error, out: any) {
-        return handleResponse.remove(this, ctx, reply, err, out)
-      })
+      logn && (logn.ctx = ctx) && (logn.apimsg = apimsg)
+      this.act(
+        apimsg,
+        function remove_result(this: any, err: Error, res: any, apimeta: any) {
+          logn && logres(logn, arguments)
+          return handleResponse.remove(
+            this,
+            ctx,
+            reply,
+            err,
+            res,
+            apimeta,
+            logn,
+          )
+        },
+      )
     },
 
     close: function (this: any, _msg: any, reply: any) {
@@ -80,25 +126,46 @@ function BrowserStore(this: any, options: any) {
 
   let meta = init(seneca, options, store)
 
+  function logstart(args: any) {
+    let logn = options.debug && {
+      msg: args[0],
+      meta: args[2],
+      start: Date.now(),
+    }
+    logn && msglog.push(logn)
+    return logn
+  }
+
+  function logres(logn: any, args: any) {
+    logn.apiend = Date.now()
+    logn.err = args[0]
+    logn.res = args[1]
+    logn.apimeta = args[2]
+    return logn
+  }
+
   return {
     name: store.name,
     tag: meta.tag,
     exports: {
       makeApiMsg,
+      msglog,
     },
   }
 }
 
 BrowserStore.defaults = {
+  debug: false,
+
   apimsg: {
     aim: 'req',
     on: 'entity',
     debounce$: true,
-    q: (msg: any, ctx: any) => msg.q,
-    ent: (msg: any, ctx: any) => msg.ent,
-    cmd: (msg: any, ctx: any) => ctx.cmd,
-    canon: (msg: any, ctx: any) => (msg.ent || msg.qent).entity$,
-    store: (msg: any, ctx: any) => ctx.store,
+    q: (msg: any, _ctx: any) => msg.q,
+    ent: (msg: any, _ctx: any) => msg.ent,
+    cmd: (_msg: any, ctx: any) => ctx.cmd,
+    canon: (msg: any, _ctx: any) => (msg.ent || msg.qent).entity$,
+    store: (_msg: any, ctx: any) => ctx.store,
   },
 
   prepareCtx: (msg: any, ctx: any) => {
@@ -115,38 +182,54 @@ BrowserStore.defaults = {
   },
 
   handleResponse: {
-    any: function (seneca: any, ctx: any, reply: any, err: Error, out: any) {
-      if (err) reply(err)
+    any: function (
+      _seneca: any,
+      ctx: any,
+      reply: any,
+      err: Error,
+      res: any,
+      _apimeta: any,
+      logn: any,
+    ) {
+      logn && (logn.end = Date.now())
 
-      if (out && out.ok && (out.ent || 'remove' === ctx.cmd)) {
-        reply(out.ent)
+      if (err) {
+        reply(err)
+      }
+
+      if (res && res.ok) {
+        reply(res.ent)
       } else {
         reply(
-          (out && out.err) ||
-            new Error(
-              'BrowserStore: ' + ctx.cmd + ' ' + ctx.canon + ': unknown error',
-            ),
+          (res && res.err) ||
+            new Error(`BrowserStore: ${ctx.cmd} ${ctx.canon}: unknown error`),
         )
       }
     },
 
-    list: function (seneca: any, ctx: any, reply: any, err: Error, out: any) {
+    list: function (
+      seneca: any,
+      ctx: any,
+      reply: any,
+      err: Error,
+      res: any,
+      _apimeta: any,
+      logn: any,
+    ) {
+      logn && (logn.end = Date.now())
       if (err) reply(err)
 
-      if (out && out.ok && out.list) {
-        let list = out.list.map((item: any) =>
+      if (res && res.ok && res.list) {
+        let list = res.list.map((item: any) =>
           seneca.entity(ctx.canon).data$(item),
         )
+        logn && (logn.end = Date.now())
         reply(list)
       } else {
         reply(
-          (out && out.err) ||
+          (res && res.err) ||
             new Error(
-              'BrowserStore: ' +
-                ctx.cmd +
-                ' ' +
-                ctx.canon +
-                ': unknown list error',
+              `BrowserStore: ${ctx.cmd} ${ctx.canon}: unknown list error`,
             ),
         )
       }
