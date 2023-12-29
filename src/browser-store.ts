@@ -191,19 +191,24 @@ BrowserStore.defaults = {
       _apimeta: any,
       logn: any,
     ) {
+      console.log('BS RES', err, res)
+
+
       logn && (logn.end = Date.now())
 
       if (err) {
         reply(err)
       }
 
-      if (res && res.ok) {
-        reply(res.ent)
-      } else {
-        reply(
-          (res && res.err) ||
-            new Error(`BrowserStore: ${ctx.cmd} ${ctx.canon}: unknown error`),
-        )
+      if (res) {
+        if (res.ok) {
+          reply(res.ent)
+        }
+        else {
+          let err = res.err
+          err = err || new Error(`BrowserStore: ${ctx.cmd} ${ctx.canon}: unknown error`)
+          reply(err)
+        }
       }
     },
 
@@ -228,17 +233,17 @@ BrowserStore.defaults = {
       } else {
         reply(
           (res && res.err) ||
-            new Error(
-              `BrowserStore: ${ctx.cmd} ${ctx.canon}: unknown list error`,
-            ),
+          new Error(
+            `BrowserStore: ${ctx.cmd} ${ctx.canon}: unknown list error`,
+          ),
         )
       }
     },
   },
 }
 
-export default BrowserStore
+// Prevent name mangling
+Object.defineProperty(BrowserStore, 'name', { value: 'BrowserStore' })
 
-if ('undefined' !== typeof module) {
-  module.exports = BrowserStore
-}
+
+export default BrowserStore

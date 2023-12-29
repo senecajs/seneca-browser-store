@@ -17,6 +17,7 @@ declare function BrowserStore(this: any, options: any): {
         }[];
     };
 };
+
 declare namespace BrowserStore {
     var defaults: {
         debug: boolean;
@@ -38,3 +39,5 @@ declare namespace BrowserStore {
     };
 }
 export default BrowserStore;
+
+export { }

@@ -1,20 +1,28 @@
 {
   "name": "@seneca/browser-store",
   "version": "0.0.4",
-  "description": "Seneca in-memory data storage plugin.",
-  "main": "dist/browser-store.js",
-  "type": "commonjs",
+  "description": "Seneca browwer storage plugin.",
+  "main": "dist/browser-store.cjs.js",
+  "module": "dist/browser-store.es.js",
   "types": "dist/browser-store.d.ts",
+  "source": "src/browser-store.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/browser-store.es.js",
+      "require": "./dist/browser-store.umd.js"
+    }
+  },
   "license": "MIT",
   "author": "Richard Rodger (http://richardrodger.com)",
   "contributors": [
     "Richard Rodger (http://richardrodger.com)"
   ],
   "scripts": {
-    "build": "tsc -d",
-    "watch": "tsc -w -d",
-    "test": "lab -v -P test -r console -o stdout -r html -o test/coverage.html -r lcov -o test/lcov.info --sourcemaps --transform node_modules/lab-transform-typescript",
-    "test-some": "lab -v -P test --sourcemaps --transform node_modules/lab-transform-typescript -g",
+    "dev": "tsc && vite build --watch",
+    "start": "vite --host --open",
+    "build": "tsc && vite build",
+    "build:types": "dts-bundle-generator --config ./dts-bundle-generator.config.ts",
+    "test": "echo test",
     "prettier": "prettier --write --no-semi --single-quote src/**/*.ts test/*.js",
     "reset": "npm run clean && npm i && npm run build && npm test",
     "clean": "rm -rf node_modules dist package-lock.json yarn.lock",
@@ -38,15 +46,24 @@
     "seneca-entity": ">=25"
   },
   "devDependencies": {
-    "@hapi/code": "9.0.3",
-    "@hapi/lab": "25.1.3",
-    "async": "3.2.5",
-    "lab-transform-typescript": "3.0.1",
-    "prettier": "3.1.0",
-    "seneca-plugin-validator": "0.6.1",
-    "seneca-promisify": "3.7.1",
-    "seneca-store-test": "5.2.0",
-    "typescript": "5.3.2"
+    "@typescript-eslint/eslint-plugin": "^6.15.0",
+    "@typescript-eslint/parser": "^6.15.0",
+    "dts-bundle-generator": "^9.0.0",
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.1.1",
+    "prettier": "^3.1.1",
+    "seneca": "^3.33.0",
+    "seneca-entity": "^25.1.1",
+    "seneca-promisify": "^3.7.1",
+    "stylelint": "15",
+    "stylelint-config-recommended": "13",
+    "stylelint-config-sass-guidelines": "^10.0.0",
+    "ts-node": "^10.9.2",
+    "tslib": "^2.6.2",
+    "typescript": "^5.3.3",
+    "vite": "^5.0.10",
+    "vite-plugin-dts": "^3.6.4"
   },
   "files": [
     "README.md",
