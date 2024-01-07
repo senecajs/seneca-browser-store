@@ -28,12 +28,14 @@ declare namespace BrowserStore {
             q: (msg: any, _ctx: any) => any;
             ent: (msg: any, _ctx: any) => any;
             cmd: (_msg: any, ctx: any) => any;
-            canon: (msg: any, _ctx: any) => any;
             store: (_msg: any, ctx: any) => any;
+            name: (_msg: any, ctx: any) => any;
+            base: (_msg: any, ctx: any) => any;
+            zone: (_msg: any, ctx: any) => any;
         };
         prepareCtx: (msg: any, ctx: any) => any;
         handleResponse: {
-            any: (_seneca: any, ctx: any, reply: any, err: Error, res: any, _apimeta: any, logn: any) => void;
+            any: (seneca: any, ctx: any, reply: any, err: Error, res: any, _apimeta: any, logn: any) => any;
             list: (seneca: any, ctx: any, reply: any, err: Error, res: any, _apimeta: any, logn: any) => void;
         };
     };

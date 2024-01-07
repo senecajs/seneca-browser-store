@@ -1,5 +1,6 @@
 /* Copyright (c) 2023 Richard Rodger and other contributors, MIT License */
 
+
 function BrowserStore(this: any, options: any) {
   let seneca: any = this
 
@@ -24,6 +25,7 @@ function BrowserStore(this: any, options: any) {
     end?: number
   }[] = []
 
+
   function makeApiMsg(msg: any, ctx: any, options: any) {
     let apimsg: any = {}
     let apimsgtm = options.apimsg
@@ -40,6 +42,7 @@ function BrowserStore(this: any, options: any) {
     return apimsg
   }
 
+
   let store = {
     name: 'BrowserStore',
 
@@ -48,15 +51,11 @@ function BrowserStore(this: any, options: any) {
       let ctx = options.prepareCtx(msg)
       let apimsg = makeApiMsg(msg, ctx, options)
 
-      logn && (logn.ctx = ctx) && (logn.apimsg = apimsg)
+      logn && logreq(logn, ctx, apimsg)
       this.act(
         apimsg,
         function save_result(this: any, err: Error, res: any, apimeta: any) {
-          logn &&
-            (logn.apiend = Date.now()) &&
-            (logn.err = err) &&
-            (logn.res = res) &&
-            (logn.apimeta = apimeta)
+          logn && logres(logn, arguments)
           return handleResponse.save(this, ctx, reply, err, res, apimeta, logn)
         },
       )
@@ -67,7 +66,7 @@ function BrowserStore(this: any, options: any) {
       let ctx = options.prepareCtx(msg)
       let apimsg = makeApiMsg(msg, ctx, options)
 
-      logn && (logn.ctx = ctx) && (logn.apimsg = apimsg)
+      logn && logreq(logn, ctx, apimsg)
       this.act(
         apimsg,
         function load_result(this: any, err: Error, res: any, apimeta: any) {
@@ -82,7 +81,7 @@ function BrowserStore(this: any, options: any) {
       let ctx = options.prepareCtx(msg)
       let apimsg = makeApiMsg(msg, ctx, options)
 
-      logn && (logn.ctx = ctx) && (logn.apimsg = apimsg)
+      logn && logreq(logn, ctx, apimsg)
       this.act(
         apimsg,
         function list_result(this: any, err: Error, res: any, apimeta: any) {
@@ -97,7 +96,7 @@ function BrowserStore(this: any, options: any) {
       let ctx = options.prepareCtx(msg)
       let apimsg = makeApiMsg(msg, ctx, options)
 
-      logn && (logn.ctx = ctx) && (logn.apimsg = apimsg)
+      logn && logreq(logn, ctx, apimsg)
       this.act(
         apimsg,
         function remove_result(this: any, err: Error, res: any, apimeta: any) {
@@ -136,6 +135,13 @@ function BrowserStore(this: any, options: any) {
     return logn
   }
 
+  function logreq(logn: any, ctx: any, apimsg: any) {
+    logn.apistart = Date.now()
+    logn.ctx = ctx
+    logn.apimsg = apimsg
+    return logn
+  }
+
   function logres(logn: any, args: any) {
     logn.apiend = Date.now()
     logn.err = args[0]
@@ -154,8 +160,15 @@ function BrowserStore(this: any, options: any) {
   }
 }
 
+
+function canonStr(seneca: any, ctx: any) {
+  return seneca.entity(ctx.zone, ctx.base, ctx.name).canon$()
+}
+
+
 BrowserStore.defaults = {
   debug: false,
+
 
   apimsg: {
     aim: 'req',
@@ -164,9 +177,12 @@ BrowserStore.defaults = {
     q: (msg: any, _ctx: any) => msg.q,
     ent: (msg: any, _ctx: any) => msg.ent,
     cmd: (_msg: any, ctx: any) => ctx.cmd,
-    canon: (msg: any, _ctx: any) => (msg.ent || msg.qent).entity$,
     store: (_msg: any, ctx: any) => ctx.store,
+    name: (_msg: any, ctx: any) => ctx.name,
+    base: (_msg: any, ctx: any) => ctx.base,
+    zone: (_msg: any, ctx: any) => ctx.zone,
   },
+
 
   prepareCtx: (msg: any, ctx: any) => {
     ctx = ctx || {}
@@ -176,14 +192,29 @@ BrowserStore.defaults = {
     delete q.store$
 
     ctx.cmd = msg.cmd
-    ctx.canon = (msg.ent || msg.qent).entity$
+
+    let ent = msg.ent || msg.qent
+
+    if (ent) {
+      if (ent.canon$) {
+        Object.assign(ctx, ent.canon$({ object: true }))
+      }
+      else if (ent.entity$) {
+        let parts = ent.entity$.split('/')
+        Object.assign(ctx, {
+          zone: '-' === parts[0] ? null : parts[0],
+          base: '-' === parts[1] ? null : parts[1],
+          name: '-' === parts[2] ? null : parts[2],
+        })
+      }
+    }
 
     return ctx
   },
 
   handleResponse: {
     any: function (
-      _seneca: any,
+      seneca: any,
       ctx: any,
       reply: any,
       err: Error,
@@ -191,24 +222,20 @@ BrowserStore.defaults = {
       _apimeta: any,
       logn: any,
     ) {
-      console.log('BS RES', err, res)
-
-
       logn && (logn.end = Date.now())
 
       if (err) {
-        reply(err)
+        return reply(err)
       }
 
-      if (res) {
-        if (res.ok) {
-          reply(res.ent)
-        }
-        else {
-          let err = res.err
-          err = err || new Error(`BrowserStore: ${ctx.cmd} ${ctx.canon}: unknown error`)
-          reply(err)
-        }
+      if (res && res.ok) {
+        return reply(res.ent)
+      }
+      else {
+        let err = res && res.err
+        err = err || new Error(
+          `BrowserStore: ${ctx.cmd} ${canonStr(seneca, ctx)}: unknown error`)
+        return reply(err)
       }
     },
 
@@ -222,24 +249,26 @@ BrowserStore.defaults = {
       logn: any,
     ) {
       logn && (logn.end = Date.now())
-      if (err) reply(err)
+
+      if (err) {
+        reply(err)
+      }
 
       if (res && res.ok && res.list) {
-        let list = res.list.map((item: any) =>
-          seneca.entity(ctx.canon).data$(item),
-        )
+        let ent = seneca.entity({ zone: ctx.zone, base: ctx.base, name: ctx.name })
+        let list = res.list.map((item: any) => ent.make$().data$(item))
         logn && (logn.end = Date.now())
         reply(list)
-      } else {
-        reply(
-          (res && res.err) ||
-          new Error(
-            `BrowserStore: ${ctx.cmd} ${ctx.canon}: unknown list error`,
-          ),
+      }
+      else {
+        let err = res && res.err
+        err = err || new Error(
+          `BrowserStore: ${ctx.cmd} ${canonStr(seneca, ctx)}: unknown list error`,
         )
+        reply(err)
       }
     },
-  },
+  }
 }
 
 // Prevent name mangling
