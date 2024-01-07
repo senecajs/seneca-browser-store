@@ -27,7 +27,10 @@ declare namespace BrowserStore {
             debounce$: boolean;
             q: (msg: any, _ctx: any) => any;
             ent: (msg: any, _ctx: any) => any;
-            cmd: (_msg: any, ctx: any) => any;
+            save: (_msg: any, ctx: any) => "entity" | undefined;
+            load: (_msg: any, ctx: any) => "entity" | undefined;
+            list: (_msg: any, ctx: any) => "entity" | undefined;
+            remove: (_msg: any, ctx: any) => "entity" | undefined;
             store: (_msg: any, ctx: any) => any;
             name: (_msg: any, ctx: any) => any;
             base: (_msg: any, ctx: any) => any;

@@ -1,157 +1,161 @@
-function q(e) {
-  let t = this, o = t.export("entity/init"), l = e.handleResponse, s = ["save", "load", "list", "remove"].reduce(
-    (n, a) => (n[a] = l[a] || l.any, n),
+function S(t) {
+  let e = this, o = e.export("entity/init"), u = t.handleResponse, i = ["save", "load", "list", "remove"].reduce(
+    (n, r) => (n[r] = u[r] || u.any, n),
     {}
   );
-  const w = [];
-  function m(n, a, f) {
-    let r = {}, i = f.apimsg;
-    for (let u in i) {
-      let d = i[u];
-      typeof d == "function" ? r[u] = d(n, a, f) : r[u] = JSON.parse(JSON.stringify(d));
+  const b = [];
+  function m(n, r, c) {
+    let a = {}, s = c.apimsg;
+    for (let l in s) {
+      let f = s[l];
+      typeof f == "function" ? a[l] = f(n, r, c) : a[l] = JSON.parse(JSON.stringify(f));
     }
-    return r;
+    return a;
   }
-  let c = {
+  let d = {
     name: "BrowserStore",
-    save: function(n, a, f) {
-      let r = e.debug && b(arguments), i = e.prepareCtx(n), u = m(n, i, e);
-      r && h(r, i, u), this.act(
-        u,
-        function(g, p, _) {
-          return r && $(r, arguments), s.save(this, i, a, g, p, _, r);
+    save: function(n, r, c) {
+      let a = t.debug && v(arguments), s = t.prepareCtx(n), l = m(n, s, t);
+      a && w(a, s, l), this.act(
+        l,
+        function(g, _, p) {
+          return a && h(a, arguments), i.save(this, s, r, g, _, p, a);
         }
       );
     },
-    load: function(n, a, f) {
-      let r = e.debug && b(arguments), i = e.prepareCtx(n), u = m(n, i, e);
-      r && h(r, i, u), this.act(
-        u,
-        function(g, p, _) {
-          return r && $(r, arguments), s.load(this, i, a, g, p, _, r);
+    load: function(n, r, c) {
+      let a = t.debug && v(arguments), s = t.prepareCtx(n), l = m(n, s, t);
+      a && w(a, s, l), this.act(
+        l,
+        function(g, _, p) {
+          return a && h(a, arguments), i.load(this, s, r, g, _, p, a);
         }
       );
     },
-    list: function(n, a, f) {
-      let r = e.debug && b(arguments), i = e.prepareCtx(n), u = m(n, i, e);
-      r && h(r, i, u), this.act(
-        u,
-        function(g, p, _) {
-          return r && $(r, arguments), s.list(this, i, a, g, p, _, r);
+    list: function(n, r, c) {
+      let a = t.debug && v(arguments), s = t.prepareCtx(n), l = m(n, s, t);
+      a && w(a, s, l), this.act(
+        l,
+        function(g, _, p) {
+          return a && h(a, arguments), i.list(this, s, r, g, _, p, a);
         }
       );
     },
-    remove: function(n, a, f) {
-      let r = e.debug && b(arguments), i = e.prepareCtx(n), u = m(n, i, e);
-      r && h(r, i, u), this.act(
-        u,
-        function(g, p, _) {
-          return r && $(r, arguments), s.remove(
+    remove: function(n, r, c) {
+      let a = t.debug && v(arguments), s = t.prepareCtx(n), l = m(n, s, t);
+      a && w(a, s, l), this.act(
+        l,
+        function(g, _, p) {
+          return a && h(a, arguments), i.remove(
             this,
-            i,
-            a,
+            s,
+            r,
             g,
-            p,
             _,
-            r
+            p,
+            a
           );
         }
       );
     },
-    close: function(n, a) {
-      a();
+    close: function(n, r) {
+      r();
     },
-    native: function(n, a) {
-      a();
+    native: function(n, r) {
+      r();
     }
-  }, v = o(t, e, c);
-  function b(n) {
-    let a = e.debug && {
+  }, $ = o(e, t, d);
+  function v(n) {
+    let r = t.debug && {
       msg: n[0],
       meta: n[2],
       start: Date.now()
     };
-    return a && w.push(a), a;
+    return r && b.push(r), r;
   }
-  function h(n, a, f) {
-    return n.apistart = Date.now(), n.ctx = a, n.apimsg = f, n;
+  function w(n, r, c) {
+    return n.apistart = Date.now(), n.ctx = r, n.apimsg = c, n;
   }
-  function $(n, a) {
-    return n.apiend = Date.now(), n.err = a[0], n.res = a[1], n.apimeta = a[2], n;
+  function h(n, r) {
+    return n.apiend = Date.now(), n.err = r[0], n.res = r[1], n.apimeta = r[2], n;
   }
   return {
-    name: c.name,
-    tag: v.tag,
+    name: d.name,
+    tag: $.tag,
     exports: {
       makeApiMsg: m,
-      msglog: w
+      msglog: b
     }
   };
 }
-function S(e, t) {
-  return e.entity(t.zone, t.base, t.name).canon$();
+function y(t, e) {
+  return t.entity(e.zone, e.base, e.name).canon$();
 }
-q.defaults = {
+S.defaults = {
   debug: !1,
   apimsg: {
     aim: "req",
     on: "entity",
     debounce$: !0,
-    q: (e, t) => e.q,
-    ent: (e, t) => e.ent,
-    cmd: (e, t) => t.cmd,
-    store: (e, t) => t.store,
-    name: (e, t) => t.name,
-    base: (e, t) => t.base,
-    zone: (e, t) => t.zone
+    q: (t, e) => t.q,
+    ent: (t, e) => t.ent,
+    // cmd: (_msg: any, ctx: any) => ctx.cmd,
+    save: (t, e) => e.cmd === "save" ? "entity" : void 0,
+    load: (t, e) => e.cmd === "load" ? "entity" : void 0,
+    list: (t, e) => e.cmd === "list" ? "entity" : void 0,
+    remove: (t, e) => e.cmd === "remove" ? "entity" : void 0,
+    store: (t, e) => e.store,
+    name: (t, e) => e.name,
+    base: (t, e) => e.base,
+    zone: (t, e) => e.zone
   },
-  prepareCtx: (e, t) => {
-    t = t || {};
-    let o = e.q;
-    t.store = o.store$ !== !1, delete o.store$, t.cmd = e.cmd;
-    let l = e.ent || e.qent;
-    if (l) {
-      if (l.canon$)
-        Object.assign(t, l.canon$({ object: !0 }));
-      else if (l.entity$) {
-        let s = l.entity$.split("/");
-        Object.assign(t, {
-          zone: s[0] === "-" ? null : s[0],
-          base: s[1] === "-" ? null : s[1],
-          name: s[2] === "-" ? null : s[2]
+  prepareCtx: (t, e) => {
+    e = e || {};
+    let o = t.q;
+    e.store = o.store$ !== !1, delete o.store$, e.cmd = t.cmd;
+    let u = t.ent || t.qent;
+    if (u) {
+      if (u.canon$)
+        Object.assign(e, u.canon$({ object: !0 }));
+      else if (u.entity$) {
+        let i = u.entity$.split("/");
+        Object.assign(e, {
+          zone: i[0] === "-" ? null : i[0],
+          base: i[1] === "-" ? null : i[1],
+          name: i[2] === "-" ? null : i[2]
         });
       }
     }
-    return t;
+    return e;
   },
   handleResponse: {
-    any: function(e, t, o, l, s, w, m) {
-      if (m && (m.end = Date.now()), l)
-        return o(l);
-      if (s && s.ok)
-        return o(s.ent);
+    any: function(t, e, o, u, i, b, m) {
+      if (m && (m.end = Date.now()), u)
+        return o(u);
+      if (i && i.ok)
+        return o(i.ent);
       {
-        let c = s && s.err;
-        return c = c || new Error(
-          `BrowserStore: ${t.cmd} ${S(e, t)}: unknown error`
-        ), o(c);
+        let d = i && i.err;
+        return d = d || new Error(
+          `BrowserStore: ${e.cmd} ${y(t, e)}: unknown error`
+        ), o(d);
       }
     },
-    list: function(e, t, o, l, s, w, m) {
-      if (m && (m.end = Date.now()), l && o(l), s && s.ok && s.list) {
-        let c = e.entity({ zone: t.zone, base: t.base, name: t.name }), v = s.list.map((b) => c.make$().data$(b));
-        m && (m.end = Date.now()), o(v);
+    list: function(t, e, o, u, i, b, m) {
+      if (m && (m.end = Date.now()), u && o(u), i && i.ok && i.list) {
+        let d = t.entity({ zone: e.zone, base: e.base, name: e.name }), $ = i.list.map((v) => d.make$().data$(v));
+        m && (m.end = Date.now()), o($);
       } else {
-        let c = s && s.err;
-        c = c || new Error(
-          `BrowserStore: ${t.cmd} ${S(e, t)}: unknown list error`
-        ), o(c);
+        let d = i && i.err;
+        d = d || new Error(
+          `BrowserStore: ${e.cmd} ${y(t, e)}: unknown list error`
+        ), o(d);
       }
     }
   }
 };
-Object.defineProperty(q, "name", { value: "BrowserStore" });
+Object.defineProperty(S, "name", { value: "BrowserStore" });
 export {
-  q as default
+  S as default
 };
 //# sourceMappingURL=browser-store.es.js.map
