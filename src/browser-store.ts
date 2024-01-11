@@ -1,6 +1,5 @@
 /* Copyright (c) 2023 Richard Rodger and other contributors, MIT License */
 
-
 function BrowserStore(this: any, options: any) {
   let seneca: any = this
 
@@ -25,7 +24,6 @@ function BrowserStore(this: any, options: any) {
     end?: number
   }[] = []
 
-
   function makeApiMsg(msg: any, ctx: any, options: any) {
     let apimsg: any = {}
     let apimsgtm = options.apimsg
@@ -41,7 +39,6 @@ function BrowserStore(this: any, options: any) {
 
     return apimsg
   }
-
 
   let store = {
     name: 'BrowserStore',
@@ -160,15 +157,12 @@ function BrowserStore(this: any, options: any) {
   }
 }
 
-
 function canonStr(seneca: any, ctx: any) {
   return seneca.entity(ctx.zone, ctx.base, ctx.name).canon$()
 }
 
-
 BrowserStore.defaults = {
   debug: false,
-
 
   apimsg: {
     aim: 'req',
@@ -177,16 +171,16 @@ BrowserStore.defaults = {
     q: (msg: any, _ctx: any) => msg.q,
     ent: (msg: any, _ctx: any) => msg.ent,
     // cmd: (_msg: any, ctx: any) => ctx.cmd,
-    save: (_msg: any, ctx: any) => 'save' === ctx.cmd ? 'entity' : undefined,
-    load: (_msg: any, ctx: any) => 'load' === ctx.cmd ? 'entity' : undefined,
-    list: (_msg: any, ctx: any) => 'list' === ctx.cmd ? 'entity' : undefined,
-    remove: (_msg: any, ctx: any) => 'remove' === ctx.cmd ? 'entity' : undefined,
+    save: (_msg: any, ctx: any) => ('save' === ctx.cmd ? 'entity' : undefined),
+    load: (_msg: any, ctx: any) => ('load' === ctx.cmd ? 'entity' : undefined),
+    list: (_msg: any, ctx: any) => ('list' === ctx.cmd ? 'entity' : undefined),
+    remove: (_msg: any, ctx: any) =>
+      'remove' === ctx.cmd ? 'entity' : undefined,
     store: (_msg: any, ctx: any) => ctx.store,
     name: (_msg: any, ctx: any) => ctx.name,
     base: (_msg: any, ctx: any) => ctx.base,
     zone: (_msg: any, ctx: any) => ctx.zone,
   },
-
 
   prepareCtx: (msg: any, ctx: any) => {
     ctx = ctx || {}
@@ -202,8 +196,7 @@ BrowserStore.defaults = {
     if (ent) {
       if (ent.canon$) {
         Object.assign(ctx, ent.canon$({ object: true }))
-      }
-      else if (ent.entity$) {
+      } else if (ent.entity$) {
         let parts = ent.entity$.split('/')
         Object.assign(ctx, {
           zone: '-' === parts[0] ? null : parts[0],
@@ -234,11 +227,13 @@ BrowserStore.defaults = {
 
       if (res && res.ok) {
         return reply(res.ent)
-      }
-      else {
+      } else {
         let err = res && res.err
-        err = err || new Error(
-          `BrowserStore: ${ctx.cmd} ${canonStr(seneca, ctx)}: unknown error`)
+        err =
+          err ||
+          new Error(
+            `BrowserStore: ${ctx.cmd} ${canonStr(seneca, ctx)}: unknown error`,
+          )
         return reply(err)
       }
     },
@@ -259,24 +254,31 @@ BrowserStore.defaults = {
       }
 
       if (res && res.ok && res.list) {
-        let ent = seneca.entity({ zone: ctx.zone, base: ctx.base, name: ctx.name })
+        let ent = seneca.entity({
+          zone: ctx.zone,
+          base: ctx.base,
+          name: ctx.name,
+        })
         let list = res.list.map((item: any) => ent.make$().data$(item))
         logn && (logn.end = Date.now())
         reply(list)
-      }
-      else {
+      } else {
         let err = res && res.err
-        err = err || new Error(
-          `BrowserStore: ${ctx.cmd} ${canonStr(seneca, ctx)}: unknown list error`,
-        )
+        err =
+          err ||
+          new Error(
+            `BrowserStore: ${ctx.cmd} ${canonStr(
+              seneca,
+              ctx,
+            )}: unknown list error`,
+          )
         reply(err)
       }
     },
-  }
+  },
 }
 
 // Prevent name mangling
 Object.defineProperty(BrowserStore, 'name', { value: 'BrowserStore' })
-
 
 export default BrowserStore

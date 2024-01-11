@@ -143,12 +143,19 @@ S.defaults = {
     },
     list: function(t, e, o, u, i, b, m) {
       if (m && (m.end = Date.now()), u && o(u), i && i.ok && i.list) {
-        let d = t.entity({ zone: e.zone, base: e.base, name: e.name }), $ = i.list.map((v) => d.make$().data$(v));
+        let d = t.entity({
+          zone: e.zone,
+          base: e.base,
+          name: e.name
+        }), $ = i.list.map((v) => d.make$().data$(v));
         m && (m.end = Date.now()), o($);
       } else {
         let d = i && i.err;
         d = d || new Error(
-          `BrowserStore: ${e.cmd} ${y(t, e)}: unknown list error`
+          `BrowserStore: ${e.cmd} ${y(
+            t,
+            e
+          )}: unknown list error`
         ), o(d);
       }
     }
