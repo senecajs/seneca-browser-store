@@ -1,4 +1,4 @@
-/* Copyright (c) 2023 Richard Rodger and other contributors, MIT License */
+/* Copyright (c) 2023-2024 Richard Rodger and other contributors, MIT License */
 
 function BrowserStore(this: any, options: any) {
   let seneca: any = this
@@ -53,7 +53,16 @@ function BrowserStore(this: any, options: any) {
         apimsg,
         function save_result(this: any, err: Error, res: any, apimeta: any) {
           logn && logres(logn, arguments)
-          return handleResponse.save(this, ctx, reply, err, res, apimeta, logn)
+          return handleResponse.save(
+            this,
+            ctx,
+            reply,
+            err,
+            res,
+            apimsg,
+            apimeta,
+            logn,
+          )
         },
       )
     },
@@ -68,7 +77,16 @@ function BrowserStore(this: any, options: any) {
         apimsg,
         function load_result(this: any, err: Error, res: any, apimeta: any) {
           logn && logres(logn, arguments)
-          return handleResponse.load(this, ctx, reply, err, res, apimeta, logn)
+          return handleResponse.load(
+            this,
+            ctx,
+            reply,
+            err,
+            res,
+            apimsg,
+            apimeta,
+            logn,
+          )
         },
       )
     },
@@ -83,7 +101,16 @@ function BrowserStore(this: any, options: any) {
         apimsg,
         function list_result(this: any, err: Error, res: any, apimeta: any) {
           logn && logres(logn, arguments)
-          return handleResponse.list(this, ctx, reply, err, res, apimeta, logn)
+          return handleResponse.list(
+            this,
+            ctx,
+            reply,
+            err,
+            res,
+            apimsg,
+            apimeta,
+            logn,
+          )
         },
       )
     },
@@ -104,6 +131,7 @@ function BrowserStore(this: any, options: any) {
             reply,
             err,
             res,
+            apimsg,
             apimeta,
             logn,
           )
@@ -216,6 +244,7 @@ BrowserStore.defaults = {
       reply: any,
       err: Error,
       res: any,
+      apimsg: any,
       _apimeta: any,
       logn: any,
     ) {
@@ -225,8 +254,18 @@ BrowserStore.defaults = {
         return reply(err)
       }
 
-      if (res && res.ok) {
-        return reply(res.ent)
+      // TODO: debounce response could be empty object - review
+      if ('entity' === apimsg.load && (null == res || null == res.ok)) {
+        return reply(null)
+      }
+
+      if (res && res.ok && res.item) {
+        let ent = seneca.entity({
+          zone: ctx.zone,
+          base: ctx.base,
+          name: ctx.name,
+        })
+        return reply(ent.make$().data$(res.item))
       } else {
         let err = res && res.err
         err =
@@ -244,6 +283,7 @@ BrowserStore.defaults = {
       reply: any,
       err: Error,
       res: any,
+      _apimsg: any,
       _apimeta: any,
       logn: any,
     ) {

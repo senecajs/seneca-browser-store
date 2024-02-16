@@ -38,8 +38,8 @@ declare namespace BrowserStore {
         };
         prepareCtx: (msg: any, ctx: any) => any;
         handleResponse: {
-            any: (seneca: any, ctx: any, reply: any, err: Error, res: any, _apimeta: any, logn: any) => any;
-            list: (seneca: any, ctx: any, reply: any, err: Error, res: any, _apimeta: any, logn: any) => void;
+            any: (seneca: any, ctx: any, reply: any, err: Error, res: any, apimsg: any, _apimeta: any, logn: any) => any;
+            list: (seneca: any, ctx: any, reply: any, err: Error, res: any, _apimsg: any, _apimeta: any, logn: any) => void;
         };
     };
 }
