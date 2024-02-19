@@ -1,5 +1,8 @@
 /* Copyright (c) 2023-2024 Richard Rodger and other contributors, MIT License */
 
+
+console.log('BrowserStore 2')
+
 function BrowserStore(this: any, options: any) {
   let seneca: any = this
 
@@ -48,6 +51,22 @@ function BrowserStore(this: any, options: any) {
       let ctx = options.prepareCtx(msg)
       let apimsg = makeApiMsg(msg, ctx, options)
 
+      // console.log('SAVE', msg, apimsg)
+
+      // Provide a new entity with no id for saving later.
+      if (true === apimsg.q.add$ && null == apimsg.ent.id && null == apimsg.ent.id$) {
+        return handleResponse.save(
+          this,
+          ctx,
+          reply,
+          null,
+          { ok: true, item: apimsg.ent },
+          apimsg,
+          meta,
+          logn,
+        )
+      }
+
       logn && logreq(logn, ctx, apimsg)
       this.act(
         apimsg,
@@ -67,7 +86,7 @@ function BrowserStore(this: any, options: any) {
       )
     },
 
-    load: function (this: any, msg: any, reply: any, _meta: any) {
+    load: function (this: any, msg: any, reply: any, meta: any) {
       let logn = options.debug && logstart(arguments)
       let ctx = options.prepareCtx(msg)
       let apimsg = makeApiMsg(msg, ctx, options)
@@ -260,13 +279,17 @@ BrowserStore.defaults = {
       }
 
       if (res && res.ok && res.item) {
-        let ent = seneca.entity({
-          zone: ctx.zone,
-          base: ctx.base,
-          name: ctx.name,
-        })
-        return reply(ent.make$().data$(res.item))
-      } else {
+        let canon = [
+          ctx.zone,
+          ctx.base,
+          ctx.name,
+        ]
+        let ent = seneca.entity(...canon)
+
+        // TODO: FIX entity make$() should already have canon
+        return reply(ent.clone$().data$(res.item))
+      }
+      else {
         let err = res && res.err
         err =
           err ||
@@ -294,15 +317,18 @@ BrowserStore.defaults = {
       }
 
       if (res && res.ok && res.list) {
-        let ent = seneca.entity({
-          zone: ctx.zone,
-          base: ctx.base,
-          name: ctx.name,
-        })
-        let list = res.list.map((item: any) => ent.make$().data$(item))
+        let canon = [
+          ctx.zone,
+          ctx.base,
+          ctx.name,
+        ]
+        let ent = seneca.entity(...canon)
+
+        let list = res.list.map((item: any) => ent.clone$().data$(item))
         logn && (logn.end = Date.now())
         reply(list)
-      } else {
+      }
+      else {
         let err = res && res.err
         err =
           err ||
