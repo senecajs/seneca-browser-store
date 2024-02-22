@@ -175,11 +175,7 @@ S.defaults = {
       if (h.load === "entity" && (a == null || a.ok == null))
         return m(null);
       if (a && a.ok && a.item) {
-        let o = [
-          e.zone,
-          e.base,
-          e.name
-        ], c = t.entity(...o);
+        let o = [e.zone, e.base, e.name], c = t.entity(...o);
         return m(c.clone$().data$(a.item));
       } else {
         let o = a && a.err;
@@ -190,11 +186,7 @@ S.defaults = {
     },
     list: function(t, e, m, u, a, h, g, d) {
       if (d && (d.end = Date.now()), u && m(u), a && a.ok && a.list) {
-        let o = [
-          e.zone,
-          e.base,
-          e.name
-        ], c = t.entity(...o), b = a.list.map((w) => c.clone$().data$(w));
+        let o = [e.zone, e.base, e.name], c = t.entity(...o), b = a.list.map((w) => c.clone$().data$(w));
         d && (d.end = Date.now()), m(b);
       } else {
         let o = a && a.err;

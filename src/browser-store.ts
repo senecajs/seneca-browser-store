@@ -1,6 +1,5 @@
 /* Copyright (c) 2023-2024 Richard Rodger and other contributors, MIT License */
 
-
 console.log('BrowserStore 2')
 
 function BrowserStore(this: any, options: any) {
@@ -54,7 +53,11 @@ function BrowserStore(this: any, options: any) {
       // console.log('SAVE', msg, apimsg)
 
       // Provide a new entity with no id for saving later.
-      if (true === apimsg.q.add$ && null == apimsg.ent.id && null == apimsg.ent.id$) {
+      if (
+        true === apimsg.q.add$ &&
+        null == apimsg.ent.id &&
+        null == apimsg.ent.id$
+      ) {
         return handleResponse.save(
           this,
           ctx,
@@ -279,17 +282,12 @@ BrowserStore.defaults = {
       }
 
       if (res && res.ok && res.item) {
-        let canon = [
-          ctx.zone,
-          ctx.base,
-          ctx.name,
-        ]
+        let canon = [ctx.zone, ctx.base, ctx.name]
         let ent = seneca.entity(...canon)
 
         // TODO: FIX entity make$() should already have canon
         return reply(ent.clone$().data$(res.item))
-      }
-      else {
+      } else {
         let err = res && res.err
         err =
           err ||
@@ -317,18 +315,13 @@ BrowserStore.defaults = {
       }
 
       if (res && res.ok && res.list) {
-        let canon = [
-          ctx.zone,
-          ctx.base,
-          ctx.name,
-        ]
+        let canon = [ctx.zone, ctx.base, ctx.name]
         let ent = seneca.entity(...canon)
 
         let list = res.list.map((item: any) => ent.clone$().data$(item))
         logn && (logn.end = Date.now())
         reply(list)
-      }
-      else {
+      } else {
         let err = res && res.err
         err =
           err ||
