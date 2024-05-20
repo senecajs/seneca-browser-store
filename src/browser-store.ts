@@ -1,6 +1,6 @@
 /* Copyright (c) 2023-2024 Richard Rodger and other contributors, MIT License */
 
-console.log('BrowserStore 2')
+console.log('BrowserStore 3')
 
 function BrowserStore(this: any, options: any) {
   let seneca: any = this
@@ -118,6 +118,8 @@ function BrowserStore(this: any, options: any) {
       let ctx = options.prepareCtx(msg)
       let apimsg = makeApiMsg(msg, ctx, options)
 
+      // console.log('BS-list', apimsg)
+
       logn && logreq(logn, ctx, apimsg)
       this.act(
         apimsg,
@@ -217,7 +219,7 @@ BrowserStore.defaults = {
   apimsg: {
     aim: 'req',
     on: 'entity',
-    debounce$: true,
+    // debounce$: true,
     q: (msg: any, _ctx: any) => msg.q,
     ent: (msg: any, _ctx: any) => msg.ent,
     // cmd: (_msg: any, ctx: any) => ctx.cmd,
@@ -309,6 +311,8 @@ BrowserStore.defaults = {
       logn: any,
     ) {
       logn && (logn.end = Date.now())
+
+      // console.log('BS-LIST-RES', res, err)
 
       if (err) {
         reply(err)

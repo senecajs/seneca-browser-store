@@ -24,7 +24,6 @@ declare namespace BrowserStore {
         apimsg: {
             aim: string;
             on: string;
-            debounce$: boolean;
             q: (msg: any, _ctx: any) => any;
             ent: (msg: any, _ctx: any) => any;
             save: (_msg: any, ctx: any) => "entity" | undefined;
@@ -46,3 +45,30 @@ declare namespace BrowserStore {
 export default BrowserStore;
 
 export { }
+
+
+declare namespace BrowserStore {
+    var defaults: {
+        debug: boolean;
+        apimsg: {
+            aim: string;
+            on: string;
+            q: (msg: any, _ctx: any) => any;
+            ent: (msg: any, _ctx: any) => any;
+            save: (_msg: any, ctx: any) => "entity" | undefined;
+            load: (_msg: any, ctx: any) => "entity" | undefined;
+            list: (_msg: any, ctx: any) => "entity" | undefined;
+            remove: (_msg: any, ctx: any) => "entity" | undefined;
+            store: (_msg: any, ctx: any) => any;
+            name: (_msg: any, ctx: any) => any;
+            base: (_msg: any, ctx: any) => any;
+            zone: (_msg: any, ctx: any) => any;
+        };
+        prepareCtx: (msg: any, ctx: any) => any;
+        handleResponse: {
+            any: (seneca: any, ctx: any, reply: any, err: Error, res: any, apimsg: any, _apimeta: any, logn: any) => any;
+            list: (seneca: any, ctx: any, reply: any, err: Error, res: any, _apimsg: any, _apimeta: any, logn: any) => void;
+        };
+    };
+}
+
