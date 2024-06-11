@@ -1,137 +1,136 @@
-console.log("BrowserStore 3");
-function y(t) {
-  let e = this, m = e.export("entity/init"), o = t.handleResponse, a = ["save", "load", "list", "remove"].reduce(
-    (n, l) => (n[l] = o[l] || o.any, n),
+function q(t) {
+  let e = this, m = e.export("entity/init"), u = t.handleResponse, a = ["save", "load", "list", "remove"].reduce(
+    (n, i) => (n[i] = u[i] || u.any, n),
     {}
   );
-  const h = [];
-  function g(n, l, f) {
-    let r = {}, s = f.apimsg;
-    for (let i in s) {
-      let _ = s[i];
-      typeof _ == "function" ? r[i] = _(n, l, f) : r[i] = JSON.parse(JSON.stringify(_));
+  const w = [];
+  function g(n, i, c) {
+    let r = {}, s = c.apimsg;
+    for (let l in s) {
+      let _ = s[l];
+      typeof _ == "function" ? r[l] = _(n, i, c) : r[l] = JSON.parse(JSON.stringify(_));
     }
     return r;
   }
   let d = {
     name: "BrowserStore",
-    save: function(n, l, f) {
-      let r = t.debug && c(arguments), s = t.prepareCtx(n), i = g(n, s, t);
-      if (i.q.add$ === !0 && i.ent.id == null && i.ent.id$ == null)
+    save: function(n, i, c) {
+      let r = t.debug && f(arguments), s = t.prepareCtx(n), l = g(n, s, t);
+      if (l.q.add$ === !0 && l.ent.id == null && l.ent.id$ == null)
         return a.save(
           this,
           s,
-          l,
-          null,
-          { ok: !0, item: i.ent },
           i,
-          u,
+          null,
+          { ok: !0, item: l.ent },
+          l,
+          o,
           r
         );
-      r && b(r, s, i), this.act(
-        i,
+      r && b(r, s, l), this.act(
+        l,
         function(p, v, $) {
-          return r && w(r, arguments), a.save(
+          return r && h(r, arguments), a.save(
             this,
             s,
-            l,
+            i,
             p,
             v,
-            i,
+            l,
             $,
             r
           );
         }
       );
     },
-    load: function(n, l, f) {
-      let r = t.debug && c(arguments), s = t.prepareCtx(n), i = g(n, s, t);
-      r && b(r, s, i), this.act(
-        i,
+    load: function(n, i, c) {
+      let r = t.debug && f(arguments), s = t.prepareCtx(n), l = g(n, s, t);
+      r && b(r, s, l), this.act(
+        l,
         function(p, v, $) {
-          return r && w(r, arguments), a.load(
+          return r && h(r, arguments), a.load(
             this,
             s,
-            l,
+            i,
             p,
             v,
-            i,
+            l,
             $,
             r
           );
         }
       );
     },
-    list: function(n, l, f) {
-      let r = t.debug && c(arguments), s = t.prepareCtx(n), i = g(n, s, t);
-      console.log("BS-list", i), r && b(r, s, i), this.act(
-        i,
+    list: function(n, i, c) {
+      let r = t.debug && f(arguments), s = t.prepareCtx(n), l = g(n, s, t);
+      r && b(r, s, l), this.act(
+        l,
         function(p, v, $) {
-          return r && w(r, arguments), a.list(
+          return r && h(r, arguments), a.list(
             this,
             s,
-            l,
+            i,
             p,
             v,
-            i,
+            l,
             $,
             r
           );
         }
       );
     },
-    remove: function(n, l, f) {
-      let r = t.debug && c(arguments), s = t.prepareCtx(n), i = g(n, s, t);
-      r && b(r, s, i), this.act(
-        i,
+    remove: function(n, i, c) {
+      let r = t.debug && f(arguments), s = t.prepareCtx(n), l = g(n, s, t);
+      r && b(r, s, l), this.act(
+        l,
         function(p, v, $) {
-          return r && w(r, arguments), a.remove(
+          return r && h(r, arguments), a.remove(
             this,
             s,
-            l,
+            i,
             p,
             v,
-            i,
+            l,
             $,
             r
           );
         }
       );
     },
-    close: function(n, l) {
-      l();
+    close: function(n, i) {
+      i();
     },
-    native: function(n, l) {
-      l();
+    native: function(n, i) {
+      i();
     }
-  }, u = m(e, t, d);
-  function c(n) {
-    let l = t.debug && {
+  }, o = m(e, t, d);
+  function f(n) {
+    let i = t.debug && {
       msg: n[0],
       meta: n[2],
       start: Date.now()
     };
-    return l && h.push(l), l;
+    return i && w.push(i), i;
   }
-  function b(n, l, f) {
-    return n.apistart = Date.now(), n.ctx = l, n.apimsg = f, n;
+  function b(n, i, c) {
+    return n.apistart = Date.now(), n.ctx = i, n.apimsg = c, n;
   }
-  function w(n, l) {
-    return n.apiend = Date.now(), n.err = l[0], n.res = l[1], n.apimeta = l[2], n;
+  function h(n, i) {
+    return n.apiend = Date.now(), n.err = i[0], n.res = i[1], n.apimeta = i[2], n;
   }
   return {
     name: d.name,
-    tag: u.tag,
+    tag: o.tag,
     exports: {
       makeApiMsg: g,
-      msglog: h
+      msglog: w
     }
   };
 }
-function S(t, e) {
+function y(t, e) {
   return t.entity(e.zone, e.base, e.name).canon$();
 }
-y.defaults = {
+q.defaults = {
   debug: !1,
   apimsg: {
     aim: "req",
@@ -153,12 +152,12 @@ y.defaults = {
     e = e || {};
     let m = t.q;
     e.store = m.store$ !== !1, delete m.store$, e.cmd = t.cmd;
-    let o = t.ent || t.qent;
-    if (o) {
-      if (o.canon$)
-        Object.assign(e, o.canon$({ object: !0 }));
-      else if (o.entity$) {
-        let a = o.entity$.split("/");
+    let u = t.ent || t.qent;
+    if (u) {
+      if (u.canon$)
+        Object.assign(e, u.canon$({ object: !0 }));
+      else if (u.entity$) {
+        let a = u.entity$.split("/");
         Object.assign(e, {
           zone: a[0] === "-" ? null : a[0],
           base: a[1] === "-" ? null : a[1],
@@ -169,39 +168,39 @@ y.defaults = {
     return e;
   },
   handleResponse: {
-    any: function(t, e, m, o, a, h, g, d) {
-      if (d && (d.end = Date.now()), o)
-        return m(o);
-      if (h.load === "entity" && (a == null || a.ok == null))
+    any: function(t, e, m, u, a, w, g, d) {
+      if (d && (d.end = Date.now()), u)
+        return m(u);
+      if (w.load === "entity" && (a == null || a.ok == null))
         return m(null);
       if (a && a.ok && a.item) {
-        let u = [e.zone, e.base, e.name], c = t.entity(...u);
-        return m(c.clone$().data$(a.item));
+        let o = [e.zone, e.base, e.name], f = t.entity(...o);
+        return m(f.clone$().data$(a.item));
       } else {
-        let u = a && a.err;
-        return u = u || new Error(
-          `BrowserStore: ${e.cmd} ${S(t, e)}: unknown error`
-        ), m(u);
+        let o = a && a.err;
+        return o = o || new Error(
+          `BrowserStore: ${e.cmd} ${y(t, e)}: unknown error`
+        ), m(o);
       }
     },
-    list: function(t, e, m, o, a, h, g, d) {
-      if (d && (d.end = Date.now()), console.log("BS-LIST-RES", a, o), o && m(o), a && a.ok && a.list) {
-        let u = [e.zone, e.base, e.name], c = t.entity(...u), b = a.list.map((w) => c.clone$().data$(w));
+    list: function(t, e, m, u, a, w, g, d) {
+      if (d && (d.end = Date.now()), u && m(u), a && a.ok && a.list) {
+        let o = [e.zone, e.base, e.name], f = t.entity(...o), b = a.list.map((h) => f.clone$().data$(h));
         d && (d.end = Date.now()), m(b);
       } else {
-        let u = a && a.err;
-        u = u || new Error(
-          `BrowserStore: ${e.cmd} ${S(
+        let o = a && a.err;
+        o = o || new Error(
+          `BrowserStore: ${e.cmd} ${y(
             t,
             e
           )}: unknown list error`
-        ), m(u);
+        ), m(o);
       }
     }
   }
 };
-Object.defineProperty(y, "name", { value: "BrowserStore" });
+Object.defineProperty(q, "name", { value: "BrowserStore" });
 export {
-  y as default
+  q as default
 };
 //# sourceMappingURL=browser-store.es.js.map

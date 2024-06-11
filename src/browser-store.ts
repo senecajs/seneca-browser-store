@@ -1,7 +1,5 @@
 /* Copyright (c) 2023-2024 Richard Rodger and other contributors, MIT License */
 
-console.log('BrowserStore 3')
-
 function BrowserStore(this: any, options: any) {
   let seneca: any = this
 
