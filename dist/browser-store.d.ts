@@ -12,8 +12,8 @@ declare function BrowserStore(this: any, options: any): {
             res?: any;
             err?: any;
             apimeta?: any;
-            apiend?: number | undefined;
-            end?: number | undefined;
+            apiend?: number;
+            end?: number;
         }[];
     };
 };
