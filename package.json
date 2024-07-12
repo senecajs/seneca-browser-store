@@ -1,6 +1,6 @@
 {
   "name": "@seneca/browser-store",
-  "version": "0.0.9",
+  "version": "0.1.0",
   "description": "Seneca browwer storage plugin.",
   "main": "dist/browser-store.cjs.js",
   "module": "dist/browser-store.es.js",
@@ -43,7 +43,7 @@
   ],
   "peerDependencies": {
     "seneca": ">=3",
-    "seneca-entity": ">=27"
+    "seneca-entity": ">=28"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^7.16.0",
@@ -58,7 +58,7 @@
     "seneca-promisify": "^3.7.2",
     "stylelint": "16",
     "stylelint-config-recommended": "14",
-    "stylelint-config-sass-guidelines": "^11.1.0",
+    "stylelint-config-sass-guidelines": "^12.0.0",
     "ts-node": "^10.9.2",
     "tslib": "^2.6.3",
     "typescript": "^5.5.3",
