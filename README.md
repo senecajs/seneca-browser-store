@@ -1,45 +1,60 @@
-![Seneca Browser-Store](http://senecajs.org/files/assets/seneca-logo.png)
+![Seneca](http://senecajs.org/files/assets/seneca-logo.png)
+> A [Seneca.js](http://senecajs.org) plugin
 
-> _Seneca Browser Store_ is a plugin for [Seneca](http://senecajs.org)
+# @seneca/browser-store
 
-Converts Seneca entity messages to backend API requests.
-
-See [seneca-entity](senecajs/seneca-entity) and the [Seneca Data Entities Tutorial](https://senecajs.org/docs/tutorials/understanding-data-entities.html) for more details on the Seneca entity API.
-
-<!-- [![npm version](https://img.shields.io/npm/v/@seneca/tangocard-provider.svg)](https://npmjs.com/package/@seneca/tangocard-provider)
-[![build](https://github.com/senecajs/seneca-tangocard-provider/actions/workflows/build.yml/badge.svg)](https://github.com/senecajs/seneca-tangocard-provider/actions/workflows/build.yml)
-[![Coverage Status](https://coveralls.io/repos/github/senecajs/seneca-tangocard-provider/badge.svg?branch=main)](https://coveralls.io/github/senecajs/seneca-tangocard-provider?branch=main)
-[![Known Vulnerabilities](https://snyk.io/test/github/senecajs/seneca-tangocard-provider/badge.svg)](https://snyk.io/test/github/senecajs/seneca-tangocard-provider)
-[![DeepScan grade](https://deepscan.io/api/teams/5016/projects/19462/branches/505954/badge/grade.svg)](https://deepscan.io/dashboard#view=project&tid=5016&pid=19462&bid=505954)
-[![Maintainability](https://api.codeclimate.com/v1/badges/f76e83896b731bb5d609/maintainability)](https://codeclimate.com/github/senecajs/seneca-tangocard-provider/maintainability) -->
+[![npm version](https://img.shields.io/npm/v/@seneca/browser-store.svg)](https://npmjs.com/package/@seneca/browser-store)
+[![build](https://github.com/senecajs/seneca-browser-store/actions/workflows/build.yml/badge.svg)](https://github.com/senecajs/seneca-browser-store/actions/workflows/build.yml)
+[![Known Vulnerabilities](https://snyk.io/test/github/senecajs/seneca-browser-store/badge.svg)](https://snyk.io/test/github/senecajs/seneca-browser-store)
 
 | ![Voxgig](https://www.voxgig.com/res/img/vgt01r.png) | This open source module is sponsored and supported by [Voxgig](https://www.voxgig.com). |
-| ---------------------------------------------------- | --------------------------------------------------------------------------------------- |
+|---|---|
 
-## Quick Example
-
-
-## Description
-
-
-## Code examples
-
+![Seneca Browser-Store](http://senecajs.org/files/assets/seneca-logo.png)
 
 ## Install
 
+```sh
+npm install @seneca/browser-store
+```
 
 ## Quick Example
 
+```js
+require('seneca')()
+  .use('@seneca/browser-store')
+```
 
-## Usage
+## More Examples
+
+See [test/](test/) for more usage examples.
+
+## Motivation
+
+A [Seneca.js](http://senecajs.org) plugin.
+
+## Support
+
+If you're using this module and need help, you can:
+
+- Post a [github issue](https://github.com/senecajs/seneca-browser-store/issues)
+- Tweet to [@senecajs](http://twitter.com/senecajs)
+- Ask on the [Gitter](https://gitter.im/senecajs/seneca)
+
+## API
+
+See [source](https://github.com/senecajs/seneca-browser-store) for API details.
 
 ## Contributing
 
-## Test
+The [Senecajs org](https://github.com/senecajs/) encourages open participation. If you feel you can help in any way, be it with documentation, examples, extra testing, or new features please get in touch.
 
+### Running tests
 
-## License
-Copyright (c) 2023, Richard Rodger and other contributors.
-Licensed under [MIT][].
+```sh
+npm run test
+```
 
-[MIT]: ./LICENSE
+## Background
+
+Part of the [Senecajs org](https://github.com/senecajs/).
