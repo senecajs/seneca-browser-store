@@ -10,7 +10,9 @@
 | ![Voxgig](https://www.voxgig.com/res/img/vgt01r.png) | This open source module is sponsored and supported by [Voxgig](https://www.voxgig.com). |
 |---|---|
 
-![Seneca Browser-Store](http://senecajs.org/files/assets/seneca-logo.png)
+Converts Seneca entity messages to backend API requests.
+
+See [seneca-entity](https://github.com/senecajs/seneca-entity) and the [Seneca Data Entities Tutorial](https://senecajs.org/docs/tutorials/understanding-data-entities.html) for more details on the Seneca entity API.
 
 ## Install
 
