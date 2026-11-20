@@ -5,28 +5,29 @@ console.log(BrowserStore)
 run()
 
 async function run() {
-  const seneca = Seneca()
+  const seneca = Seneca({ legacy: false })
     .test()
-    .use('promisify')
-    .use('entity')
+    .use('@seneca/entity')
     .use(function entityServer() {
+      // A backend that answers the API messages of BrowserStore:
+      // aim:req,on:entity,<cmd>:entity, with { ok, item } or { ok, list }.
       let seneca = this
 
       seneca
         .fix('aim:req,on:entity')
-        .message('cmd:save', async function save(msg) {
+        .message('save:entity', async function save(msg) {
           return {
             ok: true,
-            ent: (await this.entity(msg.canon).save$(msg.ent)).data$(),
+            item: (await this.entity(msg.canon).save$(msg.ent)).data$(),
           }
         })
-        .message('cmd:load', async function save(msg) {
+        .message('load:entity', async function load(msg) {
           return {
             ok: true,
-            ent: (await this.entity(msg.canon).load$(msg.q))?.data$(),
+            item: (await this.entity(msg.canon).load$(msg.q))?.data$(),
           }
         })
-        .message('cmd:list', async function save(msg) {
+        .message('list:entity', async function list(msg) {
           return {
             ok: true,
             list: (await this.entity(msg.canon).list$(msg.q)).map((n) =>
@@ -34,10 +35,12 @@ async function run() {
             ),
           }
         })
-        .message('cmd:remove', async function remove(msg) {
+        .message('remove:entity', async function remove(msg) {
           return {
             ok: true,
-            ent: (await this.entity(msg.canon).remove$(msg.q))?.data$(),
+            item: (
+              await this.entity(msg.canon).remove$({ ...msg.q, load$: true })
+            )?.data$(),
           }
         })
     })
