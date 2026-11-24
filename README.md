@@ -4,7 +4,7 @@
 
 Converts Seneca entity messages to backend API requests.
 
-See [seneca-entity](senecajs/seneca-entity) and the [Seneca Data Entities Tutorial](https://senecajs.org/docs/tutorials/understanding-data-entities.html) for more details on the Seneca entity API.
+See [@seneca/entity](https://github.com/senecajs/seneca-entity) and the [Seneca Data Entities Tutorial](https://senecajs.org/docs/tutorials/understanding-data-entities.html) for more details on the Seneca entity API.
 
 <!-- [![npm version](https://img.shields.io/npm/v/@seneca/tangocard-provider.svg)](https://npmjs.com/package/@seneca/tangocard-provider)
 [![build](https://github.com/senecajs/seneca-tangocard-provider/actions/workflows/build.yml/badge.svg)](https://github.com/senecajs/seneca-tangocard-provider/actions/workflows/build.yml)
@@ -18,6 +18,21 @@ See [seneca-entity](senecajs/seneca-entity) and the [Seneca Data Entities Tutori
 
 ## Quick Example
 
+```js
+const Seneca = require('seneca')
+
+const seneca = Seneca()
+  .use('@seneca/entity')
+  .use('@seneca/browser-store', {
+    // entities in the zone "browser" are sent to the backend
+    map: { 'browser/-/-': '*' },
+  })
+
+// Sends aim:req,on:entity,list:entity with q, ent, name, base and zone,
+// and expects a reply { ok: true, list: [...] }.
+// save, load and remove expect { ok: true, item: {...} }.
+seneca.entity('browser/-/foo').list$().then((list) => console.log(list))
+```
 
 ## Description
 
@@ -27,6 +42,11 @@ See [seneca-entity](senecajs/seneca-entity) and the [Seneca Data Entities Tutori
 
 ## Install
 
+Requires Seneca 4 (`seneca` `^4.0.0`) and `@seneca/entity` `^29.0.0`.
+
+```sh
+npm install seneca@^4 @seneca/entity @seneca/browser-store
+```
 
 ## Quick Example
 

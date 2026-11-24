@@ -211,10 +211,17 @@ function canonStr(seneca: any, ctx: any) {
   return seneca.entity(ctx.zone, ctx.base, ctx.name).canon$()
 }
 
-BrowserStore.defaults = {
+// The option shape is built with the builders Seneca passes in `valid`.
+// Plain-object defaults are closed in Seneca 4, so the option objects that
+// take caller keys are open: `apimsg` is a message template, and
+// `handleResponse` accepts handlers per command (save, load, list, remove).
+BrowserStore.defaults = ({ valid }: { valid: any }) => ({
   debug: false,
 
-  apimsg: {
+  // Entity canon map for entity/init: { 'zone/base/name': cmds }.
+  map: valid.Default(undefined, {}),
+
+  apimsg: valid.Open({
     aim: 'req',
     on: 'entity',
     // debounce$: true,
@@ -230,7 +237,7 @@ BrowserStore.defaults = {
     name: (_msg: any, ctx: any) => ctx.name,
     base: (_msg: any, ctx: any) => ctx.base,
     zone: (_msg: any, ctx: any) => ctx.zone,
-  },
+  }),
 
   prepareCtx: (msg: any, ctx: any) => {
     ctx = ctx || {}
@@ -259,7 +266,7 @@ BrowserStore.defaults = {
     return ctx
   },
 
-  handleResponse: {
+  handleResponse: valid.Open({
     any: function (
       seneca: any,
       ctx: any,
@@ -336,8 +343,8 @@ BrowserStore.defaults = {
         reply(err)
       }
     },
-  },
-}
+  }),
+})
 
 // Prevent name mangling
 Object.defineProperty(BrowserStore, 'name', { value: 'BrowserStore' })
